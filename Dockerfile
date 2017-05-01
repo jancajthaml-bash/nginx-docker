@@ -64,8 +64,6 @@ RUN 		CONFIG="\
 			mkdir /etc/nginx/conf.d/ && \
 			mkdir /etc/nginx/ssl/ && \
 			mkdir -p /usr/share/nginx/html/ && \
-			install -m644 html/index.html /usr/share/nginx/html/ && \
-			install -m644 html/50x.html /usr/share/nginx/html/ && \
 			install -m755 objs/nginx-debug /usr/sbin/nginx-debug && \
 			install -m755 objs/ngx_http_image_filter_module-debug.so /usr/lib/nginx/modules/ngx_http_image_filter_module-debug.so && \
 			ln -s ../../usr/lib/nginx/modules /etc/nginx/modules && \

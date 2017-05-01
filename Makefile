@@ -32,6 +32,7 @@ run:
 		-v $$(pwd)/example/nginx.key:/etc/nginx/ssl/nginx.key \
 		-v $$(pwd)/example/dhparam.pem:/etc/nginx/ssl/dhparam.pem \
 		-v $$(pwd)/example/nginx.conf:/etc/nginx/nginx.conf \
+		-v $$(pwd)/example/index.html:/var/www/index.html \
 		$(NAME):$(VERSION) nginx
 
 upload:
