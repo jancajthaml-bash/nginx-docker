@@ -18,7 +18,7 @@ tag: image
 	git checkout -B master
 
 run: image
-	docker run --rm -it --log-driver none $(NAME):$(VERSION)
+	docker run --rm -it --log-driver none -p 8080:8080 -p 443:443 $(NAME):$(VERSION) nginx
 
 upload:
 	docker login -u jancajthaml https://index.docker.io/v1/
