@@ -87,7 +87,6 @@ RUN 		CONFIG="\
 			ln -sf /dev/stdout /var/log/nginx/access.log && \
 			ln -sf /dev/stderr /var/log/nginx/error.log
 
-COPY 		opt/nginx.conf 	/etc/nginx/nginx.conf
 COPY 		opt/sysctl.conf /etc/sysctl.conf
 COPY 		opt/limits.conf /etc/security/limits.conf
 
