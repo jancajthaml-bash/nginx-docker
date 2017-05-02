@@ -23,8 +23,7 @@ tag: image
 	git checkout -B master
 
 run:
-	pushd example; sh self_signed_certificate.sh; popd
-	make image
+	cd example && sh self_signed_certificate.sh
 	docker run --rm -it --log-driver none \
 		-p 8080:8080 \
 		-p 443:443 \

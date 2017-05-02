@@ -2,7 +2,9 @@ FROM alpine:latest
 
 MAINTAINER	Jan Cajthaml <jan.cajthaml@gmail.com>
 
-ENV 		NGINX_VERSION=1.13.0
+ENV 		NGINX_VERSION=1.13.0 \
+			PCRE_VERSION=8.39 \
+			MORE_HEADERS_VERSION=v0.32
 
 RUN 		CONFIG="\
 				--prefix=/etc/nginx \
@@ -18,6 +20,7 @@ RUN 		CONFIG="\
 				--http-fastcgi-temp-path=/var/cache/nginx/fastcgi_temp \
 				--http-uwsgi-temp-path=/var/cache/nginx/uwsgi_temp \
 				--http-scgi-temp-path=/var/cache/nginx/scgi_temp \
+				--with-pcre=/var/cache/nginx/pcre_temp \
 				--user=nginx \
 				--group=nginx \
 				--with-http_ssl_module \
@@ -35,11 +38,15 @@ RUN 		CONFIG="\
 				--with-compat \
 				--with-file-aio \
 				--with-http_v2_module \
+				--without-http_empty_gif_module \
+				--add-module=/var/cache/nginx/more_headers_temp \
 			" && \
 			addgroup -S nginx && \
 			adduser -D -S -h /var/cache/nginx -s /sbin/nologin -G nginx nginx && \
 			apk add --no-cache --virtual .build-deps \
 										  gcc \
+										  g++ \
+										  perl \
 										  libc-dev \
 										  make \
 										  openssl-dev \
@@ -49,10 +56,15 @@ RUN 		CONFIG="\
 										  curl \
 										  gnupg \
 										  gd-dev && \
-			curl -fSL http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz -o nginx.tar.gz && \
-			mkdir -p /usr/src && \
-			tar -zxC /usr/src -f nginx.tar.gz && \
-			rm nginx.tar.gz && \
+			mkdir -p /usr/src/nginx-${NGINX_VERSION} && \
+			curl -sSL http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz | \
+				tar xvz --no-same-owner -C /usr/src/nginx-${NGINX_VERSION} --strip-components 1 -f - && \
+			mkdir -p /var/cache/nginx/pcre_temp && \
+		    curl -sSL ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-${PCRE_VERSION}.tar.gz | \
+		    	tar xvz --no-same-owner -C /var/cache/nginx/pcre_temp --strip-components 1 -f - && \
+		    mkdir -p /var/cache/nginx/more_headers_temp && \
+		    curl -sSL https://github.com/openresty/headers-more-nginx-module/archive/${MORE_HEADERS_VERSION}.tar.gz | \
+		    	tar xvz --no-same-owner -C /var/cache/nginx/more_headers_temp --strip-components 1 -f - && \
 			cd /usr/src/nginx-${NGINX_VERSION} && \
 			/usr/src/nginx-${NGINX_VERSION}/configure $CONFIG --with-debug && \
 			make -j$(getconf _NPROCESSORS_ONLN) -C /usr/src/nginx-${NGINX_VERSION} && \
